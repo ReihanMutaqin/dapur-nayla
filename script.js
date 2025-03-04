@@ -73,7 +73,7 @@ function checkout() {
     });
     message += "\nDiambil jam / Diantar jam\nKe alamat + Google Maps (jika memilih opsi diantar)\nAtas nama: ";
 
-    let whatsappUrl = `https://wa.me/082111039958?text=${encodeURIComponent(message)}`;
+    let whatsappUrl = `https://wa.me/+6282111039958?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
 }
 
