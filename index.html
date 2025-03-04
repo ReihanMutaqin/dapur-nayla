@@ -12,7 +12,18 @@
         <img src="logo.png" alt="Logo" class="logo">
         <h1>Penjualan Makanan</h1>
         <a href="admin.html" class="admin-btn"><i class="fas fa-user-cog"></i> Admin</a>
+        <button class="cart-btn" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i> Keranjang (<span id="cart-count">0</span>)
+        </button>
     </header>
+    
+    <!-- Keranjang -->
+    <div id="cart" class="cart-container">
+        <h2>Keranjang Belanja</h2>
+        <ul id="cart-items"></ul>
+        <button onclick="checkout()">Checkout via WhatsApp</button>
+    </div>
+    
 
     <main>
         <h2>Daftar Makanan</h2>
