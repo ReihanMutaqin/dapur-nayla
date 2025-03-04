@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dapur Nayla</title>
+    <title>Penjualan Makanan</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
@@ -27,11 +27,23 @@
 <div id="cart" class="cart-container">
     <h2>Keranjang Belanja</h2>
     <ul id="cart-items"></ul>
+
+    <label>Nama: <input type="text" id="customer-name"></label>
+    <label>Jam Ambil/Antar: <input type="time" id="pickup-time"></label>
+    <label>Opsi Pengiriman:
+        <select id="delivery-option">
+            <option value="diambil">Diambil</option>
+            <option value="diantar">Diantar</option>
+        </select>
+    </label>
+    <label>Alamat (jika diantar): <input type="text" id="customer-address"></label>
+    <label>Google Maps Link: <input type="text" id="maps-link"></label>
+
     <button onclick="checkout()">Checkout via WhatsApp</button>
 </div>
 
 <footer>
-    © 2025 Dapur Nayla. R.Dir Studio.
+    © 2025 Penjualan Makanan. All Rights Reserved.
 </footer>
 
 <script src="script.js"></script>

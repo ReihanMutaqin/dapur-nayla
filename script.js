@@ -1,7 +1,7 @@
 let products = [
-    { name: "Risol", price: 2000 },
-    { name: "Bakwan", price: 1000 },
-    { name: "Bolu", price: 5000 }
+    { name: "Risol", price: 2000, image: "risol.jpg" },
+    { name: "Bakwan", price: 1000, image: "bakwan.jpg" },
+    { name: "Bolu", price: 5000, image: "bolu.jpg" }
 ];
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -13,6 +13,7 @@ function displayProducts() {
     products.forEach((product, index) => {
         productList.innerHTML += `
             <div class="product">
+                <img src="${product.image}" alt="${product.name}">
                 <h3>${product.name}</h3>
                 <p>Rp ${product.price}</p>
                 <input type="number" id="qty-${index}" value="1" min="1">
@@ -30,7 +31,7 @@ function addToCart(index) {
     if (existingItem) {
         existingItem.quantity += parseInt(quantity);
     } else {
-        cart.push({ name: product.name, quantity: parseInt(quantity) });
+        cart.push({ name: product.name, quantity: parseInt(quantity), image: product.image });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -47,34 +48,38 @@ function renderCart() {
     cartItems.innerHTML = "";
 
     cart.forEach((item, index) => {
-        let li = document.createElement("li");
-        li.innerHTML = `${item.name} (${item.quantity}) 
-            <button onclick="removeFromCart(${index})">Hapus</button>`;
-        cartItems.appendChild(li);
+        cartItems.innerHTML += `
+            <li>
+                <img src="${item.image}" width="40">
+                ${item.name} (${item.quantity})
+                <button onclick="changeQuantity(${index}, -1)">➖</button>
+                <button onclick="changeQuantity(${index}, 1)">➕</button>
+                <button onclick="removeFromCart(${index})">❌</button>
+            </li>
+        `;
     });
 }
 
-function removeFromCart(index) {
-    cart.splice(index, 1);
+function changeQuantity(index, amount) {
+    cart[index].quantity += amount;
+    if (cart[index].quantity <= 0) cart.splice(index, 1);
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
     renderCart();
 }
 
-function toggleCart() {
-    let cartDiv = document.getElementById("cart");
-    cartDiv.style.display = (cartDiv.style.display === "block") ? "none" : "block";
-}
-
 function checkout() {
-    let message = "Assalamualaikum\nSaya mau pesan\n";
-    cart.forEach(item => {
-        message += `- ${item.name} ${item.quantity}\n`;
-    });
-    message += "\nDiambil jam / Diantar jam\nKe alamat + Google Maps (jika memilih opsi diantar)\nAtas nama: ";
+    let name = document.getElementById("customer-name").value;
+    let time = document.getElementById("pickup-time").value;
+    let delivery = document.getElementById("delivery-option").value;
+    let address = document.getElementById("customer-address").value;
+    let maps = document.getElementById("maps-link").value;
 
-    let whatsappUrl = `https://wa.me/+6282111039958?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+    let message = `Assalamualaikum\nSaya mau pesan:\n`;
+    cart.forEach(item => message += `- ${item.name} ${item.quantity}\n`);
+    message += `\n${delivery === "diantar" ? `Diantar ke: ${address} (${maps})` : "Diambil"} jam ${time}\nAtas nama: ${name}`;
+
+    window.open(`https://wa.me/082111039958?text=${encodeURIComponent(message)}`);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
