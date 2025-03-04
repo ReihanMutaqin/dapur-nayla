@@ -1,77 +1,84 @@
-let products = JSON.parse(localStorage.getItem("products")) || [];
+let products = [
+    { name: "Risol", price: 2000 },
+    { name: "Bakwan", price: 1000 },
+    { name: "Bolu", price: 5000 }
+];
 
-// Menampilkan produk di halaman utama
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
 function displayProducts() {
-    let menu = document.getElementById("menu");
-    menu.innerHTML = "";
+    let productList = document.getElementById("product-list");
+    productList.innerHTML = "";
+
     products.forEach((product, index) => {
-        let item = document.createElement("div");
-        item.className = "item";
-        item.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>Rp ${product.price}</p>
-            <input type="number" value="1" min="1" id="qty-${index}">
-            <button onclick="addToCart(${index})"><i class="fas fa-shopping-cart"></i> Tambah</button>
+        productList.innerHTML += `
+            <div class="product">
+                <h3>${product.name}</h3>
+                <p>Rp ${product.price}</p>
+                <input type="number" id="qty-${index}" value="1" min="1">
+                <button onclick="addToCart(${index})">Tambah</button>
+            </div>
         `;
-        menu.appendChild(item);
     });
 }
 
-// Menambahkan produk ke keranjang
 function addToCart(index) {
     let quantity = document.getElementById(`qty-${index}`).value;
     let product = products[index];
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push({ name: product.name, quantity });
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
 
-// Admin - Tambah Produk
-function addProduct() {
-    let name = document.getElementById("name").value;
-    let price = document.getElementById("price").value;
-    let imageFile = document.getElementById("image").files[0];
-
-    if (!name || !price || !imageFile) {
-        alert("Semua field harus diisi!");
-        return;
+    let existingItem = cart.find(item => item.name === product.name);
+    if (existingItem) {
+        existingItem.quantity += parseInt(quantity);
+    } else {
+        cart.push({ name: product.name, quantity: parseInt(quantity) });
     }
 
-    let reader = new FileReader();
-    reader.onload = function(event) {
-        let product = { name, price, image: event.target.result };
-        products.push(product);
-        localStorage.setItem("products", JSON.stringify(products));
-        renderAdminProducts();
-    };
-    reader.readAsDataURL(imageFile);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    renderCart();
 }
 
-// Admin - Hapus Produk
-function deleteProduct(index) {
-    products.splice(index, 1);
-    localStorage.setItem("products", JSON.stringify(products));
-    renderAdminProducts();
+function updateCartCount() {
+    document.getElementById("cart-count").innerText = cart.reduce((total, item) => total + item.quantity, 0);
 }
 
-// Menampilkan produk di halaman admin
-function renderAdminProducts() {
-    let list = document.getElementById("product-list");
-    list.innerHTML = "";
-    products.forEach((product, index) => {
-        let item = document.createElement("div");
-        item.className = "product-item";
-        item.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>Rp ${product.price}</p>
-            <button onclick="deleteProduct(${index})"><i class="fas fa-trash"></i> Hapus</button>
-        `;
-        list.appendChild(item);
+function renderCart() {
+    let cartItems = document.getElementById("cart-items");
+    cartItems.innerHTML = "";
+
+    cart.forEach((item, index) => {
+        let li = document.createElement("li");
+        li.innerHTML = `${item.name} (${item.quantity}) 
+            <button onclick="removeFromCart(${index})">Hapus</button>`;
+        cartItems.appendChild(li);
     });
 }
 
-// Menjalankan fungsi saat halaman dimuat
-if (document.getElementById("menu")) displayProducts();
-if (document.getElementById("product-list")) renderAdminProducts();
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    renderCart();
+}
+
+function toggleCart() {
+    let cartDiv = document.getElementById("cart");
+    cartDiv.style.display = (cartDiv.style.display === "block") ? "none" : "block";
+}
+
+function checkout() {
+    let message = "Assalamualaikum\nSaya mau pesan\n";
+    cart.forEach(item => {
+        message += `- ${item.name} ${item.quantity}\n`;
+    });
+    message += "\nDiambil jam / Diantar jam\nKe alamat + Google Maps (jika memilih opsi diantar)\nAtas nama: ";
+
+    let whatsappUrl = `https://wa.me/082111039958?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayProducts();
+    updateCartCount();
+    renderCart();
+});
