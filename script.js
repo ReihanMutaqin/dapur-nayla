@@ -1,89 +1,60 @@
-let products = [
-    { name: "Risol", price: 2000, image: "risol.jpg" },
-    { name: "Bakwan", price: 1000, image: "bakwan.jpg" },
-    { name: "Bolu", price: 5000, image: "bolu.jpg" }
-];
-
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
 function displayProducts() {
     let productList = document.getElementById("product-list");
+    if (!productList) return;
+
+    let products = JSON.parse(localStorage.getItem("products")) || [];
     productList.innerHTML = "";
 
     products.forEach((product, index) => {
         productList.innerHTML += `
-            <div class="product">
-                <img src="${product.image}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p>Rp ${product.price}</p>
-                <input type="number" id="qty-${index}" value="1" min="1">
-                <button onclick="addToCart(${index})">Tambah</button>
+            <div class="col-md-4">
+                <div class="product-card p-3">
+                    <img src="${product.image}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
+                    <h5>${product.name}</h5>
+                    <p>Rp ${product.price} | Stok: <span id="stock-${index}">${product.stock}</span></p>
+                    <button class="btn btn-success w-100" onclick="addToCart(${index})" ${product.stock <= 0 ? 'disabled' : ''}>Tambah</button>
+                </div>
             </div>
         `;
     });
 }
 
+// Fungsi Menambah Produk ke Keranjang
 function addToCart(index) {
-    let quantity = document.getElementById(`qty-${index}`).value;
+    let products = JSON.parse(localStorage.getItem("products")) || [];
     let product = products[index];
 
-    let existingItem = cart.find(item => item.name === product.name);
-    if (existingItem) {
-        existingItem.quantity += parseInt(quantity);
-    } else {
-        cart.push({ name: product.name, quantity: parseInt(quantity), image: product.image });
+    if (product.stock <= 0) {
+        alert("Stok habis!");
+        return;
     }
 
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let existingItem = cart.find(item => item.name === product.name);
+
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push({ name: product.name, price: product.price, quantity: 1, image: product.image });
+    }
+
+    product.stock--;
+    localStorage.setItem("products", JSON.stringify(products));
     localStorage.setItem("cart", JSON.stringify(cart));
+
+    displayProducts();
     updateCartCount();
-    renderCart();
 }
 
+// Fungsi Update Jumlah Produk di Keranjang
 function updateCartCount() {
-    document.getElementById("cart-count").innerText = cart.reduce((total, item) => total + item.quantity, 0);
+    let cartCount = document.getElementById("cart-count");
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cartCount.innerText = cart.reduce((total, item) => total + item.quantity, 0);
 }
 
-function renderCart() {
-    let cartItems = document.getElementById("cart-items");
-    cartItems.innerHTML = "";
-
-    cart.forEach((item, index) => {
-        cartItems.innerHTML += `
-            <li>
-                <img src="${item.image}" width="40">
-                ${item.name} (${item.quantity})
-                <button onclick="changeQuantity(${index}, -1)">➖</button>
-                <button onclick="changeQuantity(${index}, 1)">➕</button>
-                <button onclick="removeFromCart(${index})">❌</button>
-            </li>
-        `;
-    });
-}
-
-function changeQuantity(index, amount) {
-    cart[index].quantity += amount;
-    if (cart[index].quantity <= 0) cart.splice(index, 1);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartCount();
-    renderCart();
-}
-
-function checkout() {
-    let name = document.getElementById("customer-name").value;
-    let time = document.getElementById("pickup-time").value;
-    let delivery = document.getElementById("delivery-option").value;
-    let address = document.getElementById("customer-address").value;
-    let maps = document.getElementById("maps-link").value;
-
-    let message = `Assalamualaikum\nSaya mau pesan:\n`;
-    cart.forEach(item => message += `- ${item.name} ${item.quantity}\n`);
-    message += `\n${delivery === "diantar" ? `Diantar ke: ${address} (${maps})` : "Diambil"} jam ${time}\nAtas nama: ${name}`;
-
-    window.open(`https://wa.me/082111039958?text=${encodeURIComponent(message)}`);
-}
-
+// Jalankan saat halaman dimuat
 document.addEventListener("DOMContentLoaded", () => {
     displayProducts();
     updateCartCount();
-    renderCart();
 });

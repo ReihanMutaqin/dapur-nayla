@@ -2,48 +2,53 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penjualan Makanan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dapur Nayla</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-<header>
-    <img src="logo.png" alt="Logo" class="logo">
-    <h1>Penjualan Makanan</h1>
-    <a href="admin.html" class="admin-btn"><i class="fas fa-user-cog"></i> Admin</a>
-    <button class="cart-btn" onclick="toggleCart()">
-        <i class="fas fa-shopping-cart"></i> Keranjang (<span id="cart-count">0</span>)
-    </button>
-</header>
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Dapur Nayla</a>
+        <button class="btn btn-warning" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i> Keranjang (<span id="cart-count">0</span>)
+        </button>
+        <a href="admin.html" class="btn btn-primary">Admin</a>
+    </div>
+</nav>
 
-<div class="container">
-    <h2>Daftar Makanan</h2>
-    <div id="product-list" class="product-list"></div>
+<!-- Daftar Produk -->
+<div class="container mt-4">
+    <h2 class="text-center text-light">Menu Makanan</h2>
+    <div id="product-list" class="row"></div>
 </div>
 
 <!-- Keranjang Belanja -->
-<div id="cart" class="cart-container">
-    <h2>Keranjang Belanja</h2>
-    <ul id="cart-items"></ul>
+<div id="cart" class="cart-container shadow p-3 bg-white rounded">
+    <h4 class="text-center">Keranjang Belanja</h4>
+    <ul id="cart-items" class="list-group mb-3"></ul>
 
-    <label>Nama: <input type="text" id="customer-name"></label>
-    <label>Jam Ambil/Antar: <input type="time" id="pickup-time"></label>
+    <label>Nama: <input type="text" id="customer-name" class="form-control"></label>
+    <label>Jam Ambil/Antar: <input type="time" id="pickup-time" class="form-control"></label>
     <label>Opsi Pengiriman:
-        <select id="delivery-option">
+        <select id="delivery-option" class="form-select" onchange="toggleAddressField()">
             <option value="diambil">Diambil</option>
             <option value="diantar">Diantar</option>
         </select>
     </label>
-    <label>Alamat (jika diantar): <input type="text" id="customer-address"></label>
-    <label>Google Maps Link: <input type="text" id="maps-link"></label>
+    <div id="address-section" style="display: none;">
+        <label>Alamat: <input type="text" id="customer-address" class="form-control"></label>
+        <label>Google Maps: <input type="text" id="maps-link" class="form-control"></label>
+    </div>
 
-    <button onclick="checkout()">Checkout via WhatsApp</button>
+    <button class="btn btn-success w-100 mt-2" onclick="checkout()">Checkout via WhatsApp</button>
 </div>
 
-<footer>
-    © 2025 Penjualan Makanan. All Rights Reserved.
+<footer class="bg-dark text-light text-center py-3 mt-4">
+    © 2025 Dapur Nayla. All Rights Reserved.
 </footer>
 
 <script src="script.js"></script>

@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Risol",
+        "price": 2000,
+        "stock": 10
+    },
+    {
+        "name": "Bakwan",
+        "price": 1000,
+        "stock": 15
+    },
+    {
+        "name": "Bolu",
+        "price": 5000,
+        "stock": 8
+    }
+]

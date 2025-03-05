@@ -1,100 +1,37 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    text-align: center;
+    font-family: 'Arial', sans-serif;
+    background-color: #212529;
+    color: white;
 }
 
-header {
-    background-color: #3498db;
-    color: white;
+/* Produk */
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
     padding: 15px;
     text-align: center;
-}
-
-.logo {
-    width: 50px;
-    vertical-align: middle;
-}
-
-.admin-btn {
-    float: right;
     background: white;
-    color: #3498db;
-    padding: 8px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.cart-btn {
-    background: white;
-    color: #3498db;
-    padding: 8px 15px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.container {
-    margin: 20px auto;
-    width: 80%;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
+    color: black;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.product-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.product {
-    background: #fff;
-    margin: 10px;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.product img {
-    width: 100px;
-    height: 100px;
-    border-radius: 5px;
-}
-
+/* Keranjang Belanja */
 .cart-container {
     display: none;
     position: fixed;
-    top: 60px;
-    right: 20px;
-    width: 300px;
+    top: 10%;
+    right: 10px;
+    width: 350px;
+    max-height: 500px;
+    overflow-y: auto;
     background: white;
     border: 1px solid #ddd;
     padding: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-}
-
-.cart-container ul {
-    list-style: none;
-    padding: 0;
-}
-
-.cart-container li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 1000;
 }
 
 footer {
-    background: #333;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    margin-top: 20px;
+    margin-top: 30px;
 }
