@@ -1,60 +1,47 @@
-function displayProducts() {
-    let productList = document.getElementById("product-list");
-    if (!productList) return;
+document.addEventListener("DOMContentLoaded", () => {
+    loadProducts();
+    updateCartCount();
+    renderCart();
+    setupDeliveryOption();
+});
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    productList.innerHTML = "";
+function loadProducts() {
+    fetch("data.json")
+        .then(response => response.json())
+        .then(products => {
+            let productList = document.getElementById("product-list");
+            productList.innerHTML = "";
+            products.forEach(product => {
+                let productCard = document.createElement("div");
+                productCard.className = "col-md-4 mb-3";
+                productCard.innerHTML = `
+                    <div class="card">
+                        <img src="${product.image}" class="card-img-top" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">Rp ${product.price.toLocaleString()} | Stok: ${product.stock}</p>
+                            <button class="btn btn-primary" onclick="addToCart('${product.id}', '${product.name}', ${product.price}')" ${product.stock <= 0 ? "disabled" : ""}>Tambah</button>
+                        </div>
+                    </div>
+                `;
+                productList.appendChild(productCard);
+            });
+        })
+        .catch(error => console.error("Gagal memuat data produk:", error));
+}
 
-    products.forEach((product, index) => {
-        productList.innerHTML += `
-            <div class="col-md-4">
-                <div class="product-card p-3">
-                    <img src="${product.image}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
-                    <h5>${product.name}</h5>
-                    <p>Rp ${product.price} | Stok: <span id="stock-${index}">${product.stock}</span></p>
-                    <button class="btn btn-success w-100" onclick="addToCart(${index})" ${product.stock <= 0 ? 'disabled' : ''}>Tambah</button>
-                </div>
-            </div>
-        `;
+function addToCart(id, name, price) {
+    fetch("backend.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reduceStock", id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert("Stok habis!");
+            return;
+        }
+        loadProducts(); 
     });
 }
-
-// Fungsi Menambah Produk ke Keranjang
-function addToCart(index) {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    let product = products[index];
-
-    if (product.stock <= 0) {
-        alert("Stok habis!");
-        return;
-    }
-
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let existingItem = cart.find(item => item.name === product.name);
-
-    if (existingItem) {
-        existingItem.quantity++;
-    } else {
-        cart.push({ name: product.name, price: product.price, quantity: 1, image: product.image });
-    }
-
-    product.stock--;
-    localStorage.setItem("products", JSON.stringify(products));
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    displayProducts();
-    updateCartCount();
-}
-
-// Fungsi Update Jumlah Produk di Keranjang
-function updateCartCount() {
-    let cartCount = document.getElementById("cart-count");
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cartCount.innerText = cart.reduce((total, item) => total + item.quantity, 0);
-}
-
-// Jalankan saat halaman dimuat
-document.addEventListener("DOMContentLoaded", () => {
-    displayProducts();
-    updateCartCount();
-});

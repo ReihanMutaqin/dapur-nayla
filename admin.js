@@ -1,52 +1,74 @@
-function displayAdminProducts() {
-    let adminProductList = document.getElementById("admin-product-list");
-    if (!adminProductList) return;
+document.addEventListener("DOMContentLoaded", () => {
+    loadAdminProducts();
+});
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    adminProductList.innerHTML = "";
-
-    products.forEach((product, index) => {
-        adminProductList.innerHTML += `
-            <div class="col-md-4">
-                <div class="product-card p-3">
-                    <h5>${product.name}</h5>
-                    <p>Rp ${product.price} | Stok: <span id="admin-stock-${index}">${product.stock}</span></p>
-                    <button class="btn btn-primary w-100" onclick="changeStock(${index}, 1)">+ Tambah Stok</button>
-                    <button class="btn btn-warning w-100 mt-2" onclick="changeStock(${index}, -1)">- Kurangi Stok</button>
-                    <button class="btn btn-danger w-100 mt-2" onclick="deleteProduct(${index})">Hapus</button>
-                </div>
-            </div>
-        `;
-    });
+function loadAdminProducts() {
+    fetch("data.json")
+        .then(response => response.json())
+        .then(products => {
+            let productList = document.getElementById("admin-product-list");
+            productList.innerHTML = "";
+            products.forEach((product, index) => {
+                let li = document.createElement("li");
+                li.className = "list-group-item d-flex justify-content-between align-items-center";
+                li.innerHTML = `
+                    ${product.name} - Rp ${product.price.toLocaleString()} | Stok: ${product.stock}
+                    <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">🗑 Hapus</button>
+                `;
+                productList.appendChild(li);
+            });
+        })
+        .catch(error => console.error("Gagal memuat data produk:", error));
 }
 
 function addProduct() {
-    let name = document.getElementById("name").value;
-    let price = parseInt(document.getElementById("price").value);
-    let stock = parseInt(document.getElementById("stock").value);
+    let name = document.getElementById("product-name").value;
+    let price = document.getElementById("product-price").value;
+    let stock = document.getElementById("product-stock").value;
+    let image = document.getElementById("product-image").files[0];
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    let newProduct = { name, price, stock };
+    if (!name || !price || !stock || !image) {
+        alert("Harap isi semua kolom dan pilih gambar!");
+        return;
+    }
 
-    products.push(newProduct);
-    localStorage.setItem("products", JSON.stringify(products));
+    let formData = new FormData();
+    formData.append("action", "add");
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("stock", stock);
+    formData.append("image", image);
 
-    displayAdminProducts();
+    fetch("backend.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Produk berhasil ditambahkan!");
+            location.reload();
+        } else {
+            alert("Gagal menambah produk: " + data.message);
+        }
+    })
+    .catch(error => console.error("Gagal menambah produk:", error));
 }
 
 function deleteProduct(index) {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    products.splice(index, 1);
-    localStorage.setItem("products", JSON.stringify(products));
-    displayAdminProducts();
+    fetch("backend.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete", index })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Produk berhasil dihapus!");
+            location.reload();
+        } else {
+            alert("Gagal menghapus produk: " + data.message);
+        }
+    })
+    .catch(error => console.error("Gagal menghapus produk:", error));
 }
-
-function changeStock(index, amount) {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    products[index].stock += amount;
-    if (products[index].stock < 0) products[index].stock = 0;
-    localStorage.setItem("products", JSON.stringify(products));
-    displayAdminProducts();
-}
-
-document.addEventListener("DOMContentLoaded", displayAdminProducts);

@@ -2,40 +2,40 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Dapur Nayla</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+    <script src="admin.js" defer></script>
 </head>
 <body>
 
 <nav class="navbar navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">Admin Panel - Dapur Nayla</a>
-        <a href="index.html" class="btn btn-warning">Kembali</a>
+        <a class="navbar-brand" href="index.html">⬅️ Kembali</a>
     </div>
 </nav>
 
 <div class="container mt-4">
-    <h2 class="text-center">Kelola Produk</h2>
+    <h2 class="text-center mb-4">🔧 Kelola Menu</h2>
 
-    <div class="card p-3 shadow-sm">
-        <h4>Tambah Produk</h4>
-        <input type="text" id="name" class="form-control mb-2" placeholder="Nama Produk">
-        <input type="number" id="price" class="form-control mb-2" placeholder="Harga">
-        <input type="number" id="stock" class="form-control mb-2" placeholder="Stok">
-        <input type="file" id="image" class="form-control mb-2" accept="image/*">
-        <button class="btn btn-primary w-100" onclick="addProduct()">Tambah Produk</button>
+    <div class="mb-3">
+        <label>Nama Produk</label>
+        <input type="text" id="product-name" class="form-control">
     </div>
-
-    <h3 class="mt-4">Daftar Produk</h3>
-    <div id="admin-product-list" class="row"></div>
+    <div class="mb-3">
+        <label>Harga</label>
+        <input type="number" id="product-price" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label>Stok</label>
+        <input type="number" id="product-stock" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label>Upload Gambar</label>
+        <input type="file" id="product-image" class="form-control">
+    </div>
+    <button class="btn btn-success w-100" onclick="addProduct()">➕ Tambah Produk</button>
 </div>
 
-<footer class="bg-dark text-light text-center py-3 mt-4">
-    © 2025 Dapur Nayla. All Rights Reserved.
-</footer>
-
-<script src="admin.js"></script>
 </body>
 </html>
