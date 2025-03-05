@@ -58,17 +58,19 @@ function addProduct() {
 function deleteProduct(index) {
     fetch("backend.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "delete", index })
+        body: formData
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => response.text()) // Ubah dulu ke text untuk debugging
+    .then(text => {
+        console.log("RESPON DARI SERVER:", text); // Debugging untuk melihat output dari backend
+        let data = JSON.parse(text); // Konversi kembali ke JSON
         if (data.success) {
-            alert("Produk berhasil dihapus!");
+            alert("Produk berhasil ditambahkan!");
             location.reload();
         } else {
-            alert("Gagal menghapus produk: " + data.message);
+            alert("Gagal menambah produk: " + data.message);
         }
     })
-    .catch(error => console.error("Gagal menghapus produk:", error));
+    .catch(error => console.error("Gagal menambah produk:", error));
+    
 }
