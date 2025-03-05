@@ -12,26 +12,85 @@ body {
     text-align: center;
     background: white;
     color: black;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    transform: scale(1.03);
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px; /* Ukuran gambar seragam */
+    object-fit: cover; /* Pastikan gambar tidak terdistorsi */
+    border-radius: 8px;
+}
+
+.product-card h5 {
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+.product-card p {
+    font-size: 0.9rem;
+    color: #666;
 }
 
 /* Keranjang Belanja */
 .cart-container {
     display: none;
     position: fixed;
-    top: 10%;
-    right: 10px;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
     width: 350px;
-    max-height: 500px;
+    max-height: 80vh;
     overflow-y: auto;
     background: white;
     border: 1px solid #ddd;
     padding: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     z-index: 1000;
 }
 
+.cart-container h4 {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+/* Tombol */
+.btn-primary, .btn-success, .btn-danger {
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .cart-container {
+        width: 90%;
+        right: 5%;
+        max-height: 70vh;
+    }
+
+    .product-card img {
+        height: 150px; /* Ukuran gambar lebih kecil di layar kecil */
+    }
+}
+
 footer {
     margin-top: 30px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #777;
 }

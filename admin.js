@@ -3,74 +3,77 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadAdminProducts() {
-    fetch("data.json")
-        .then(response => response.json())
-        .then(products => {
-            let productList = document.getElementById("admin-product-list");
-            productList.innerHTML = "";
-            products.forEach((product, index) => {
-                let li = document.createElement("li");
-                li.className = "list-group-item d-flex justify-content-between align-items-center";
-                li.innerHTML = `
-                    ${product.name} - Rp ${product.price.toLocaleString()} | Stok: ${product.stock}
-                    <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">🗑 Hapus</button>
-                `;
-                productList.appendChild(li);
-            });
-        })
-        .catch(error => console.error("Gagal memuat data produk:", error));
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    let productList = document.getElementById("admin-product-list");
+
+    if (products.length === 0) {
+        productList.innerHTML = "<li class='list-group-item text-center'>Belum ada produk</li>";
+        return;
+    }
+
+    productList.innerHTML = ""; // Kosongkan daftar sebelum diisi ulang
+
+    products.forEach((product, index) => {
+        let li = document.createElement("li");
+        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.innerHTML = `
+            <div>
+                <strong>${product.name}</strong> - Rp ${product.price.toLocaleString()} | Stok: ${product.stock}
+            </div>
+            <div>
+                <button class="btn btn-sm btn-success" onclick="updateStock(${index}, 1)">➕</button>
+                <button class="btn btn-sm btn-warning" onclick="updateStock(${index}, -1)">➖</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteProduct(${index})">🗑</button>
+            </div>
+        `;
+        productList.appendChild(li);
+    });
 }
 
 function addProduct() {
     let name = document.getElementById("product-name").value;
     let price = document.getElementById("product-price").value;
     let stock = document.getElementById("product-stock").value;
-    let image = document.getElementById("product-image").files[0];
+    let imageInput = document.getElementById("product-image").files[0];
 
-    if (!name || !price || !stock || !image) {
+    if (!name || !price || !stock || !imageInput) {
         alert("Harap isi semua kolom dan pilih gambar!");
         return;
     }
 
-    let formData = new FormData();
-    formData.append("action", "add");
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("stock", stock);
-    formData.append("image", image);
+    let reader = new FileReader();
+    reader.onload = function (e) {
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+        let newProduct = {
+            id: Date.now(),
+            name: name,
+            price: parseInt(price),
+            stock: parseInt(stock),
+            image: e.target.result
+        };
 
-    fetch("backend.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Produk berhasil ditambahkan!");
-            location.reload();
-        } else {
-            alert("Gagal menambah produk: " + data.message);
-        }
-    })
-    .catch(error => console.error("Gagal menambah produk:", error));
+        products.push(newProduct);
+        localStorage.setItem("products", JSON.stringify(products));
+
+        alert("Produk berhasil ditambahkan!");
+        loadAdminProducts(); // Perbarui daftar produk di admin
+    };
+    reader.readAsDataURL(imageInput);
+}
+
+function updateStock(index, amount) {
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    products[index].stock += amount;
+    if (products[index].stock < 0) products[index].stock = 0;
+    localStorage.setItem("products", JSON.stringify(products));
+
+    loadAdminProducts(); // Perbarui daftar di halaman Admin
 }
 
 function deleteProduct(index) {
-    fetch("backend.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text()) // Ubah dulu ke text untuk debugging
-    .then(text => {
-        console.log("RESPON DARI SERVER:", text); // Debugging untuk melihat output dari backend
-        let data = JSON.parse(text); // Konversi kembali ke JSON
-        if (data.success) {
-            alert("Produk berhasil ditambahkan!");
-            location.reload();
-        } else {
-            alert("Gagal menambah produk: " + data.message);
-        }
-    })
-    .catch(error => console.error("Gagal menambah produk:", error));
-    
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    products.splice(index, 1);
+    localStorage.setItem("products", JSON.stringify(products));
+
+    loadAdminProducts();
 }
